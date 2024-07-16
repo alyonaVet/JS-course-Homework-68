@@ -1,4 +1,4 @@
-import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import {AsyncThunk, createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import axiosApi from '../../axiosApi';
 import {RootState} from '../../app/store';
 
@@ -38,6 +38,14 @@ export const addTask = createAsyncThunk<Task, string, { state: RootState }>(
   return response.data;
 });
 
+
+export const deleteTask: AsyncThunk<string, string, { state: RootState }> = createAsyncThunk(
+  'tasks/deleteTask',
+  async (taskId: string) => {
+  const response = await axiosApi.delete(`/tasks/${taskId}.json`);
+  return response.data;
+});
+
 export const ToDoTaskSlice = createSlice({
   name: 'tasks',
   initialState,
@@ -59,9 +67,22 @@ export const ToDoTaskSlice = createSlice({
       .addCase(addTask.pending, (state)=>{
         state.error = false;
         state.loading = true;
-      }).addCase(addTask.fulfilled, (state)=>{
+      })
+      .addCase(addTask.fulfilled, (state)=>{
         state.loading = false;
-      }).addCase(addTask.rejected, (state)=>{
+      })
+      .addCase(addTask.rejected, (state)=>{
+        state.error = true;
+        state.loading = false;
+      })
+      .addCase(deleteTask.pending, (state)=>{
+        state.error = false;
+        state.loading = true;
+      })
+      .addCase(deleteTask.fulfilled, (state)=>{
+        state.loading = false;
+      })
+      .addCase(deleteTask.rejected, (state)=>{
         state.error = true;
         state.loading = false;
       });
