@@ -3,35 +3,37 @@ import axiosApi from '../../axiosApi';
 import {RootState} from '../../app/store';
 
 interface Task {
-  id: string;
   title: string;
   status: boolean;
 }
 
 export interface TaskState {
-  tasks: Task[];
+  tasks: Record<string, Task>;
   loading: boolean;
   error: boolean;
 }
 
 const initialState: TaskState = {
-  tasks: [],
+  tasks: {},
   loading: false,
   error: false,
 };
 
 
 
-export const fetchTasks = createAsyncThunk<Task[], void, { state: RootState }>(
+export const fetchTasks = createAsyncThunk<Record<string, Task>, void, { state: RootState }>(
   'tasks/fetch',
   async () => {
-    const response = await axiosApi.get<Task[] | null>('/tasks.json');
-    return response.data || [];
+    const response = await axiosApi.get<Record<string, Task> | null>('/tasks.json');
+    console.log(response.data);
+    return response.data || {};
   }
 );
 
 
-export const addTask = createAsyncThunk<Task, string, { state: RootState }>('tasks/addTask', async (title: string) => {
+export const addTask = createAsyncThunk<Task, string, { state: RootState }>(
+  'tasks/addTask',
+  async (title: string) => {
   const response = await axiosApi.post<Task>('/tasks.json', { title, status: false });
   return response.data;
 });
@@ -53,10 +55,17 @@ export const ToDoTaskSlice = createSlice({
       .addCase(fetchTasks.rejected, (state) => {
         state.loading = false;
         state.error = true;
+      })
+      .addCase(addTask.pending, (state)=>{
+        state.error = false;
+        state.loading = true;
+      }).addCase(addTask.fulfilled, (state)=>{
+        state.loading = false;
+      }).addCase(addTask.rejected, (state)=>{
+        state.error = true;
+        state.loading = false;
       });
-    builder.addCase(addTask.fulfilled, (state, action) => {
-      state.tasks.push(action.payload);
-    })
+
   }
 });
 

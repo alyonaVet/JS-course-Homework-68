@@ -1,7 +1,7 @@
 import {useDispatch} from 'react-redux';
 import React, {ChangeEvent, useState} from 'react';
 import {AppDispatch} from '../../app/store';
-import {addTask} from '../../containers/ToDoTask/ToDoTaskSlice';
+import {addTask, fetchTasks} from '../../containers/ToDoTask/ToDoTaskSlice';
 
 const TaskForm: React.FC = () => {
   const [task, setTask] = useState('');
@@ -14,9 +14,10 @@ const TaskForm: React.FC = () => {
     });
   };
 
-  const onFormSubmit = (e: React.FormEvent) => {
+  const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(addTask(task));
+    await dispatch(addTask(task));
+    await dispatch(fetchTasks());
     setTask('');
   };
 

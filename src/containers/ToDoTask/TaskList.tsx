@@ -23,11 +23,11 @@ const TaskList: React.FC = () => {
   return (
     <>
       <ul className="list-group">
-        {tasks && tasks.length > 0 ? (
-          tasks.map((task) => (
+        {tasks && Object.keys(tasks).length > 0 ? (
+          Object.entries(tasks).reverse().map(([id,task]) => (
             <Task
-              key={task.id}
-              id={task.id}
+              key={id}
+              id={id}
               title={task.title}
               status={task.status}
               onChecked={checkStatus}
