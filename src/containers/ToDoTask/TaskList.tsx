@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../app/store';
-import {fetchTasks, deleteTask} from './ToDoTaskSlice';
+import {fetchTasks, deleteTask, updateTask, TaskType} from './ToDoTaskSlice';
 import Task from '../../components/Task/Task';
 
 const TaskList: React.FC = () => {
@@ -13,12 +13,13 @@ const TaskList: React.FC = () => {
     dispatch(fetchTasks());
   }, [dispatch]);
 
-  const checkStatus = () => {
-
-  };
-
   const deleteTaskHandler = async (id:string) => {
     await dispatch(deleteTask(id))
+    await dispatch(fetchTasks())
+  };
+
+  const checkTaskHandler = async (id:string, task : TaskType) => {
+    await dispatch(updateTask({taskId:id, task: task}));
     await dispatch(fetchTasks())
   };
 
@@ -32,7 +33,7 @@ const TaskList: React.FC = () => {
               id={id}
               title={task.title}
               status={task.status}
-              onChecked={checkStatus}
+              onChecked={()=>checkTaskHandler(id, task)}
               onDelete={()=>deleteTaskHandler(id)}
             />
           ))
