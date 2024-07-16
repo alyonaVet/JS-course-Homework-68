@@ -14,7 +14,6 @@ interface updateTaskType {
 
 export interface TaskState {
   tasks: Record<string, TaskType>;
-
   loading: boolean;
   error: boolean;
 }
@@ -30,7 +29,6 @@ export const fetchTasks = createAsyncThunk<Record<string, TaskType>, void, { sta
   'tasks/fetch',
   async () => {
     const response = await axiosApi.get<Record<string, TaskType> | null>('/tasks.json');
-    console.log(response.data);
     return response.data || {};
   }
 );
@@ -110,8 +108,6 @@ export const ToDoTaskSlice = createSlice({
         state.error = true;
         state.loading = false;
       });
-    ;
-
   }
 });
 
