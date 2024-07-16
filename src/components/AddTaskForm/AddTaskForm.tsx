@@ -1,10 +1,12 @@
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import React, {ChangeEvent, useState} from 'react';
-import {AppDispatch} from '../../app/store';
+import {AppDispatch, RootState} from '../../app/store';
 import {addTask, fetchTasks} from '../../containers/ToDoTask/ToDoTaskSlice';
 
 const TaskForm: React.FC = () => {
   const [task, setTask] = useState('');
+  const tasksLoading = useSelector((state: RootState) => state.todoTask.loading);
+
   const dispatch: AppDispatch = useDispatch();
 
   const onTaskChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -23,7 +25,7 @@ const TaskForm: React.FC = () => {
 
   return (
     <div className="container mt-5">
-      <h4>Add new task</h4>
+      <h4>{tasksLoading ? 'Loading...' : 'Add new task'}</h4>
       <form className="row mt-3 align-items-center" onSubmit={onFormSubmit}>
         <div className="col-6">
           <input
